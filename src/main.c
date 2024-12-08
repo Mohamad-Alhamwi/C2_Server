@@ -8,12 +8,14 @@
 # define PORT 8888 // The port users will be connecting to.
 
 int createSocket();
+int setSocketOptions(int socket_fd);
 void throwError(const char * custom_err_msg);
 
 int main(void)
 {
-    errno = 0;  // Initialize errno to indicate no errors initially.
+    errno = 0;         // Initialize errno to indicate no errors initially.
     int socket_fd;     // Listen on socket_fd.
+    int socket_opt; 
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
 
@@ -26,11 +28,27 @@ int main(void)
     }
 
     printf("Socket created successfully. FD: %d\n", socket_fd);
+
+    /* Set socket options. */
+    socket_opt = setSocketOptions(socket_fd);
+
+    if(socket_opt == -1)
+    {
+        throwError("Failed to set socket options.");
+    }
+
+    return 0;
 }
 
 int createSocket()
 {
     return socket(PF_INET, SOCK_STREAM, 0);
+}
+
+int setSocketOptions(int socket_fd)
+{
+    int yes = 1;
+    return setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))
 }
 
 void throwError(const char * custom_err_msg)
