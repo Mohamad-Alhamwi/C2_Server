@@ -40,6 +40,8 @@ int main(void)
 
     printf("Socket options set successfully.\n");
 
+    closeSocket(int socket_fd);
+    
     return 0;
 }
 
