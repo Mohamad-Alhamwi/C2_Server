@@ -8,7 +8,7 @@
 # define PORT 8888 // The port users will be connecting to.
 
 int createSocket();
-void throwError();
+void throwError(const char * custom_err_msg);
 
 int main(void)
 {
@@ -20,9 +20,9 @@ int main(void)
     /* Set up a TCP/IP socket */
     socket_fd = createSocket();
 
-    if (socket_fd == -1)
+    if(socket_fd == -1)
     {
-        throwError();
+        throwError("Failed to create a socket");
     }
 
     printf("Socket created successfully. FD: %d\n", socket_fd);
@@ -33,10 +33,11 @@ int createSocket()
     return socket(PF_INET, SOCK_STREAM, 0);
 }
 
-void throwError()
+void throwError(const char * custom_err_msg)
 {
-    printf("An error occurred. Error Number: %d\n", errno);
-    printf(strerror(errno));
-    printf("Aborted.");
+    fprintf(stderr, "%s.\n", custom_err_msg);
+    fprintf(stderr, "Error Number: %d.\n", errno);
+    fprintf(stderr, "Error Description: %s.\n", strerror(errno));
+    fprintf(stderr, "Aborted.\n");
     exit(EXIT_FAILURE);
 }
