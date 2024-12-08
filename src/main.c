@@ -38,6 +38,8 @@ int main(void)
         throwError("Failed to set socket options.");
     }
 
+    printf("Socket options set successfully.\n");
+
     return 0;
 }
 
@@ -55,6 +57,7 @@ int setSocketOptions(int socket_fd)
 void closeSocket(int socket_fd)
 {
     close(socket_fd);
+    printf("Socket with FD %d closed successfully.\n", socket_fd);
 }
 
 void throwError(const char * custom_err_msg)
