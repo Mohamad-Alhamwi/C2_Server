@@ -9,6 +9,7 @@
 
 int createSocket();
 int setSocketOptions(int socket_fd);
+void closeSocket(int socket_fd);
 void throwError(const char * custom_err_msg);
 
 int main(void)
@@ -49,6 +50,11 @@ int setSocketOptions(int socket_fd)
 {
     int yes = 1;
     return setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int))
+}
+
+void closeSocket(int socket_fd)
+{
+    close(socket_fd);
 }
 
 void throwError(const char * custom_err_msg)
