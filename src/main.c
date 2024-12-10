@@ -3,6 +3,7 @@
 # include <errno.h>
 # include <unistd.h>
 # include <string.h>
+#include <arpa/inet.h>
 # include <sys/socket.h>
 # include <netinet/in.h>
 
@@ -59,6 +60,15 @@ int main(void)
     if(listening_status == -1)
     {
         throwError("Failed to listen.");
+    }
+
+    /* Print server listening information */
+    printf("Server is listening on IP: %s, PORT: %d\n", inet_ntoa(server_address.sin_addr), ntohs(server_address.sin_port));
+
+    /* Stall the program to keep the server running */
+    while (1)
+    {
+        // Empty loop to keep the server running
     }
 
     closeSocket(socket_fd);
