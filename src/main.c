@@ -3,7 +3,7 @@
 # include <errno.h>
 # include <unistd.h>
 # include <string.h>
-#include <arpa/inet.h>
+# include <arpa/inet.h>
 # include <sys/socket.h>
 # include <netinet/in.h>
 
@@ -91,6 +91,7 @@ int main(void)
         while(client_data_length > 0)
         {
             printf("Received: %d bytes\n", client_data_length);
+            client_data_length = receiveClientData(communicating_socket_fd, received_data_buffer, 1024, 0);
         }
 
         close(communicating_socket_fd);
