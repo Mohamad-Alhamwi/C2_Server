@@ -135,7 +135,7 @@ ssize_t sendResponse(int communicating_socket_fd, const void * response_message,
 
 ssize_t receiveClientData(int communicating_socket_fd, void * buffer, size_t length, int flags)
 {
-    return recv(communicating_socket_fd, &buffer, length, flags);
+    return recv(communicating_socket_fd, buffer, length, flags);
 }
 
 void closeSocket(int socket_fd)
