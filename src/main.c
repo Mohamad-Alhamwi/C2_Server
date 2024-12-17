@@ -10,30 +10,37 @@
 # define PORT 8888 // The port users will be connecting to.
 
 int createSocket();
-int setSocketOptions(int socket_fd);
-int bindSocketToIp(int socket_fd, const struct sockaddr * server_address, socklen_t address_length);
-int listenForConnections(int socket_fd, int connections_length);
+int setSocketOptions(int listening_socket_fd);
+int bindSocketToIp(int listening_socket_fd, const struct sockaddr * server_address, socklen_t address_length);
+int listenForConnections(int listening_socket_fd, int connections_length);
+int acceptConnections(int listening_socket_fd, struct sockaddr * restrict client_address, socklen_t * restrict address_length);
+ssize_t sendResponse(int communicating_socket_fd, const void * response_message, size_t message_length, int flags);
+ssize_t receiveClientData(int communicating_socket_fd, void * buffer, size_t length, int flags);
 void closeSocket(int socket_fd);
 void throwError(const char * custom_err_msg);
 
 int main(void)
 {
     errno = 0;         // Initialize errno to indicate no errors initially.
-    int socket_fd;     // Listen on socket_fd.
+    int listening_socket_fd;     // Listen on listening_socket_fd.
+    int communicating_socket_fd;
     int socket_options; 
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
+    socklen_t client_address_length = sizeof(struct sockaddr_in);
+    ssize_t client_data_length = 0;
+    char received_data_buffer [1024];
 
     /* Set up a TCP/IP socket */
-    socket_fd = createSocket();
+    listening_socket_fd = createSocket();
 
-    if(socket_fd == -1)
+    if(listening_socket_fd == -1)
     {
         throwError("Failed to create a socket");
     }
 
     /* Set socket options. */
-    socket_options = setSocketOptions(socket_fd);
+    socket_options = setSocketOptions(listening_socket_fd);
 
     if(socket_options == -1)
     {
@@ -46,7 +53,7 @@ int main(void)
     server_address.sin_addr.s_addr = 0;          // filled with the servers’s current IP address.
     memset(&(server_address.sin_zero), '\0', 8); // Zero the rest of the struct.
     
-    int bind_status = bindSocketToIp(socket_fd, (struct sockaddr *) &server_address, sizeof(struct sockaddr));
+    int bind_status = bindSocketToIp(listening_socket_fd, (struct sockaddr *) &server_address, sizeof(struct sockaddr));
     
     if(bind_status == -1)
     {
@@ -55,7 +62,7 @@ int main(void)
 
     int connections_length = 5;
 
-    int listening_status = listenForConnections(socket_fd, connections_length);
+    int listening_status = listenForConnections(listening_socket_fd, connections_length);
     
     if(listening_status == -1)
     {
@@ -63,15 +70,33 @@ int main(void)
     }
 
     /* Print server listening information */
-    printf("Server is listening on IP: %s, PORT: %d\n", inet_ntoa(server_address.sin_addr), ntohs(server_address.sin_port));
+    printf("Server is listening on ip: %s, port: %d\n", inet_ntoa(server_address.sin_addr), ntohs(server_address.sin_port));
 
-    /* Stall the program to keep the server running */
+    // Accept loop.
     while (1)
     {
-        // Empty loop to keep the server running
+        communicating_socket_fd = acceptConnections(listening_socket_fd, (struct sockaddr *) &client_address, &client_address_length);
+        
+        if(communicating_socket_fd == -1)
+        {
+            throwError("Failed to accept incoming connections.");
+        }
+
+        printf("Server: got connection from %s port %d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
+
+        ssize_t bytes_sent = sendResponse(communicating_socket_fd, "Hello, world!\n", 13, 0);
+
+        client_data_length = receiveClientData(communicating_socket_fd, received_data_buffer, 1024, 0);
+
+        while(client_data_length > 0)
+        {
+            printf("Received: %d bytes\n", client_data_length);
+        }
+
+        close(communicating_socket_fd);
     }
 
-    closeSocket(socket_fd);
+    closeSocket(listening_socket_fd);
 
     return 0;
 }
@@ -81,20 +106,35 @@ int createSocket()
     return socket(PF_INET, SOCK_STREAM, 0);
 }
 
-int setSocketOptions(int socket_fd)
+int setSocketOptions(int listening_socket_fd)
 {
     int yes = 1;
-    return setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+    return setsockopt(listening_socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 }
 
-int bindSocketToIp(int socket_fd, const struct sockaddr * server_address, socklen_t address_length)
+int bindSocketToIp(int listening_socket_fd, const struct sockaddr * server_address, socklen_t address_length)
 {
-    return bind(socket_fd, server_address, address_length);
+    return bind(listening_socket_fd, server_address, address_length);
 }
 
-int listenForConnections(int socket_fd, int connections_length)
+int listenForConnections(int listening_socket_fd, int connections_length)
 {
-    return listen(socket_fd, connections_length);
+    return listen(listening_socket_fd, connections_length);
+}
+
+int acceptConnections(int listening_socket_fd, struct sockaddr * restrict client_address, socklen_t * restrict address_length)
+{
+    return accept(listening_socket_fd, client_address, address_length);
+}
+
+ssize_t sendResponse(int communicating_socket_fd, const void * response_message, size_t message_length, int flags)
+{
+    return send(communicating_socket_fd, response_message, message_length, flags);
+}
+
+ssize_t receiveClientData(int communicating_socket_fd, void * buffer, size_t length, int flags)
+{
+    return recv(communicating_socket_fd, &buffer, length, flags);
 }
 
 void closeSocket(int socket_fd)
