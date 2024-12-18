@@ -1,6 +1,6 @@
 #include "server.h"
 #include "socket_manager.h"
-#include "client_handler.h"
+#include "agent_handler.h"
 #include "utils.h"
 #include <arpa/inet.h>
 #include <string.h>
@@ -9,50 +9,76 @@
 
 void startServer(int port)
 {
-    int listening_socket_fd, communicating_socket_fd;
-    struct sockaddr_in server_address, client_address;
-    socklen_t client_address_length = sizeof(struct sockaddr_in);
-    char received_data_buffer[1024];
-    ssize_t client_data_length;
+    int listening_sock_fd;
+    struct sockaddr_in server_addr;
+    int sock_opts, is_bound, is_listening;
+    int backlog = 5; // The maximum length to which the queue of pending connections for listening_sock_fd may grow.
+    Agent agent;
+    ssize_t agent_data_length;
 
-    /* Create and configure the server socket */
-    listening_socket_fd = createSocket();
-    if (listening_socket_fd == -1)
-        throwError("Failed to create a socket");
+    /* Create and configure the server socket. */
+    listening_sock_fd = createSocket();
 
-    if (setSocketOptions(listening_socket_fd) == -1)
-        throwError("Failed to set socket options");
+    if(listening_sock_fd == -1)
+    {
+        throwError("Failed to create a socket.");
+    }
 
-    server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(port);
-    server_address.sin_addr.s_addr = INADDR_ANY;
-    memset(&(server_address.sin_zero), '\0', 8);
+    /* Set socket options. */
+    sock_opts = setSocketOptions(listening_sock_fd);
 
-    if (bindSocketToIp(listening_socket_fd, (struct sockaddr *)&server_address, sizeof(server_address)) == -1)
-        throwError("Failed to bind socket");
+    if(sock_opts == -1)
+    {
+        throwError("Failed to set socket options.");
+    }
 
-    if (listenForConnections(listening_socket_fd, 5) == -1)
-        throwError("Failed to listen");
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(port);
+    server_addr.sin_addr.s_addr = INADDR_ANY;    // Bind the server to all available IP addresses on the host.
+    memset(&(server_addr.sin_zero), '\0', 8);    // Zero the rest of the struct.
+
+    is_bound = bindSocketToIp(listening_sock_fd, (struct sockaddr *) &server_addr, sizeof(server_addr));
+
+    if (is_bound == -1)
+    {
+        throwError("Failed to bind socket.");
+    }
+
+    int is_listening = listenForConnections(listening_sock_fd, backlog);
+
+    if (is_listening == -1)
+    {
+        throwError("Failed to listen.");
+    }
 
     printf("Server is listening on port %d\n", port);
 
-    /* Accept and handle connections */
+    /* Accept and handle connections. */
     while (1)
     {
-        communicating_socket_fd = acceptConnections(listening_socket_fd, (struct sockaddr *)&client_address, &client_address_length);
-        if (communicating_socket_fd == -1)
-            throwError("Failed to accept connection");
-
-        printf("Got connection from %s:%d\n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port));
-
-        sendResponse(communicating_socket_fd, "Hello, world!\n", 13, 0);
-        while ((client_data_length = receiveClientData(communicating_socket_fd, received_data_buffer, 1024, 0)) > 0)
+        // Accept a new connection and initialize the agent.
+        int agent_sock_fd = acceptConnections(listening_sock_fd, (struct sockaddr *) &agent.addr, &agent.addr_len);
+        
+        if (agent_sock_fd == -1)
         {
-            printf("Received: %zd bytes\n", client_data_length);
+            throwError("Failed to accept connection");
+            // TODO: Skip to the next iteration, do not just terminate the server.
         }
 
-        closeSocket(communicating_socket_fd);
+        initAgent(&agent, agent.sock_fd, &agent.addr);
+
+        sendDataToAgent(&agent, "Hello, world!\n", 13, 0);
+
+        agent_data_length = receiveAgentData(&agent, 0);
+
+        while (agent_data_length > 0)
+        {
+            printf("Received: %zd bytes\n", agent_data_length);
+            agent_data_length = receiveAgentData(&agent, 0);
+        }
+
+        closeAgent(&agent); // Close the agent connection.
     }
 
-    closeSocket(listening_socket_fd);
+    closeSocket(listening_sock_fd); // Close the server socket.
 }
