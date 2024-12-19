@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Iinclude
-OBJ = src/socket_manager.c src/client_handler.c src/utils.c src/server.c main.c
+OBJ = src/agent_handler.c src/server.c src/socket_manager.c src/utils.c main.c
 
 all: server
 
