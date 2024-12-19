@@ -24,3 +24,5 @@ void throwError(const char *custom_err_msg, int should_abort)
     // TODO: Handle custom errors.
     return;
 }
+
+// TODO: Implement a generic clean-up function cleanUp(, switch).
