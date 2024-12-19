@@ -56,16 +56,18 @@ void startServer(int port)
     /* Accept and handle connections. */
     while (1)
     {
-        // Accept a new connection and initialize the agent.
-        int agent_sock_fd = acceptConnections(listening_sock_fd, (struct sockaddr *) &agent.addr, &agent.addr_len);
+        // Accept a new connection.
+        agent.addr_len = sizeof(struct sockaddr_in);
+        int new_sock_fd = acceptConnections(listening_sock_fd, (struct sockaddr *) &agent.addr, &agent.addr_len);
         
-        if (agent_sock_fd == -1)
+        if (new_sock_fd == -1)
         {
             throwError("Failed to accept connection");
             // TODO: Skip to the next iteration, do not just terminate the server.
         }
 
-        initAgent(&agent, agent.sock_fd, &agent.addr);
+        // Initialize agent.
+        initAgent(&agent, new_sock_fd);
 
         sendDataToAgent(&agent, "Hello, world!\n", 13, 0);
 
