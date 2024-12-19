@@ -5,11 +5,9 @@
 #include <arpa/inet.h>
 
 /* Initialize a new agent structure. */
-void initAgent(Agent *agent, int sock_fd, struct sockaddr_in *addr, socklen_t addr_len)
+void initAgent(Agent *agent, int sock_fd)
 {
     agent -> sock_fd = sock_fd;
-    agent -> addr = *addr;
-    agent -> addr_len = addr_len; // TODO: Needs to be changed, as a pointer or as a value?
     memset(agent -> data_buff, 0, sizeof(agent -> data_buff));  // Clear the buffer.
 }
 
