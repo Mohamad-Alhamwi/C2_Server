@@ -37,7 +37,7 @@ void throwError(const char *custom_err_msg, int should_abort)
 
 void cleanUpResources(int cleanup_type, void *resource)
 {
-    switch (cleanup_type)
+    switch(cleanup_type)
     {
         case CLEANUP_FILE_DESCRIPTORS:
             if (resource != NULL)
@@ -68,3 +68,5 @@ void cleanUpResources(int cleanup_type, void *resource)
 }
 
 // TODO: Implement a log function.
+
+// TODO: Handle buffer flushing in general.
