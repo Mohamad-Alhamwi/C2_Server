@@ -1,13 +1,9 @@
 # include "utils.h"
 # include <stdio.h>
-# include <stdlib.h>
 # include <errno.h>
+# include <unistd.h>
+# include <stdlib.h>
 # include <string.h>
-
-# define FALSE 0
-# define TRUE 1
-# define CLEANUP_FILE_DESCRIPTORS 1
-# define CLEANUP_MEMORY  2
 
 void abortOperation()
 {
