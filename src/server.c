@@ -21,7 +21,7 @@ void startServer(int port)
 
     if(listening_sock_fd == -1)
     {
-        throwError("Failed to create a socket.", 1);
+        throwError("Failed to create a socket.", TRUE);
     }
 
     /* Set socket options. */
@@ -29,8 +29,8 @@ void startServer(int port)
 
     if(sock_opts == -1)
     {
-        throwError("Failed to set socket options.", 1);
-        //TODO: Close listening_sock_fd.
+        closeServer(int sock_fd); // Clean up server resources.
+        throwError("Failed to set socket options.", TRUE);
     }
 
     server_addr.sin_family = AF_INET;
@@ -42,16 +42,16 @@ void startServer(int port)
 
     if (is_bound == -1)
     {
-        throwError("Failed to bind socket.", 1);
-        //TODO: Close listening_sock_fd.
+        closeServer(int sock_fd); // Clean up server resources.
+        throwError("Failed to bind socket.", TRUE);
     }
 
     is_listening = listenForConnections(listening_sock_fd, backlog);
 
     if (is_listening == -1)
     {
-        throwError("Failed to listen.", 1);
-        //TODO: Close listening_sock_fd.
+        closeServer(int sock_fd); // Clean up server resources.
+        throwError("Failed to listen.", TRUE);
     }
 
     printf("Server is listening on port %d\n", port);
@@ -66,7 +66,7 @@ void startServer(int port)
         if (new_sock_fd == -1)
         {   
             /*Log the error, skip the current iteration, and retry accepting connections.*/
-            throwError("Failed to accept connection.", 0);
+            throwError("Failed to accept connection.", FALSE);
             continue;
         }
 
@@ -74,7 +74,7 @@ void startServer(int port)
         initAgent(&agent, new_sock_fd);
 
         // Send a message to the connected agent.
-        // TODO: Added a check for sendDataToAgent().
+        // TODO: Add a check for sendDataToAgent().
         sendDataToAgent(&agent, "Hello, world!\n", 13, 0);
 
         agent_data_length = receiveAgentData(&agent, 0);
@@ -85,9 +85,19 @@ void startServer(int port)
             agent_data_length = receiveAgentData(&agent, 0);
         }
 
-        // Close the agent connection after communication ends.
+        /* Close the agent connection after communication ends. */
         closeAgent(&agent);
     }
 
-    closeSocket(listening_sock_fd); // Close the server socket.
+    /* Close the server socket. */
+    closeServer(int sock_fd);
+    
+    return;
+}
+
+void closeServer(int sock_fd)
+{
+    void closeSocket(sock_fd);
+    printf("Server has been shut down.\n");
+    return;
 }
