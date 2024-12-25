@@ -1,4 +1,4 @@
-#include "utils.h"
+# include "utils.h"
 # include <stdio.h>
 # include <stdlib.h>
 # include <errno.h>
@@ -26,7 +26,7 @@ void throwError(const char *custom_err_msg, int should_abort)
     fprintf(stderr, "Error Description: %s.\n", strerror(errno));
     fflush(stderr);  // Ensure error description is printed.
 
-    if(should_abort != 0)
+    if(should_abort != FALSE)
     {
         abortOperation();
     }
@@ -63,6 +63,8 @@ void cleanUpResources(int cleanup_type, void *resource)
             throwError("Invalid cleanup type", FALSE);
             break;
     }
+
+    return;
 }
 
 // TODO: Implement a log function.
