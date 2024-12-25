@@ -4,6 +4,13 @@
 #include <errno.h>
 #include <string.h>
 
+void abortOperation()
+{
+    fprintf(stderr, "Aborted.\n");
+    fflush(stderr);  // Ensure the abort message is printed.
+    exit(EXIT_FAILURE);
+}
+
 void throwError(const char *custom_err_msg, int should_abort)
 {
     /*Handle errors that occur in a system call or library function.*/
@@ -16,9 +23,7 @@ void throwError(const char *custom_err_msg, int should_abort)
 
     if(should_abort != 0)
     {
-        fprintf(stderr, "Aborted.\n");
-        fflush(stderr);  // Ensure the abort message is printed.
-        exit(EXIT_FAILURE);
+        abortOperation();
     }
 
     // TODO: Handle custom errors.
@@ -26,3 +31,5 @@ void throwError(const char *custom_err_msg, int should_abort)
 }
 
 // TODO: Implement a generic clean-up function cleanUp(, switch).
+
+// TODO: Implement a log function.
