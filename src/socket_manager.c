@@ -1,38 +1,39 @@
-#include "socket_manager.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <errno.h>
-#include <string.h>
+# include "socket_manager.h"
+# include "utils.h"
+# include <stdio.h>
+# include <stdlib.h>
+# include <unistd.h>
+# include <errno.h>
+# include <string.h>
 
 int createSocket()
 {
     return socket(PF_INET, SOCK_STREAM, 0);
 }
 
-int setSocketOptions(int listening_socket_fd)
+int setSocketOptions(int listening_sock_fd)
 {
     int yes = 1;
-    return setsockopt(listening_socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
+    return setsockopt(listening_sock_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 }
 
-int bindSocketToIp(int listening_socket_fd, const struct sockaddr *server_address, socklen_t address_length)
+int bindSocketToIp(int listening_sock_fd, const struct sockaddr *server_addr, socklen_t addr_len)
 {
-    return bind(listening_socket_fd, server_address, address_length);
+    return bind(listening_sock_fd, server_addr, addr_len);
 }
 
-int listenForConnections(int listening_socket_fd, int connections_length)
+int listenForConnections(int listening_sock_fd, int connections_len)
 {
-    return listen(listening_socket_fd, connections_length);
+    return listen(listening_sock_fd, connections_len);
 }
 
-int acceptConnections(int listening_socket_fd, struct sockaddr *restrict client_address, socklen_t *restrict address_length)
+int acceptConnections(int listening_sock_fd, struct sockaddr *restrict client_addr, socklen_t *restrict addr_len)
 {
-    return accept(listening_socket_fd, client_address, address_length);
+    return accept(listening_sock_fd, client_addr, addr_len);
 }
 
-void closeSocket(int socket_fd)
+void closeSocket(int sock_fd)
 {
-    close(socket_fd);
-    printf("Socket with FD %d closed successfully.\n", socket_fd);
+    cleanUpResources(CLEANUP_FILE_DESCRIPTORS, &sock_fd);
+    return;
 }
