@@ -1,18 +1,17 @@
-#include "server.h"
-#include "socket_manager.h"
-#include "agent_handler.h"
-#include "utils.h"
-#include <arpa/inet.h>
-#include <string.h>
-#include <stdio.h>
-#include <unistd.h>
+# include "server.h"
+# include "socket_manager.h"
+# include "agent_handler.h"
+# include "utils.h"
+# include <arpa/inet.h>
+# include <string.h>
+# include <stdio.h>
+# include <unistd.h>
 
-void startServer(int port)
+void startServer(int port, int backlog)
 {
     int listening_sock_fd;
     struct sockaddr_in server_addr;
     int sock_opts, is_bound, is_listening;
-    int backlog = 5; // The maximum length to which the queue of pending connections for listening_sock_fd may grow.
     Agent agent;
     ssize_t agent_data_length;
 
@@ -29,7 +28,7 @@ void startServer(int port)
 
     if(sock_opts == -1)
     {
-        closeServer(int sock_fd); // Clean up server resources.
+        closeServer(listening_sock_fd); // Clean up server resources.
         throwError("Failed to set socket options.", TRUE);
     }
 
@@ -42,15 +41,15 @@ void startServer(int port)
 
     if (is_bound == -1)
     {
-        closeServer(int sock_fd); // Clean up server resources.
-        throwError("Failed to bind socket.", TRUE);
+        closeServer(listening_sock_fd); // Clean up server resources.
+        throwError("Failed to bind socket", TRUE);
     }
 
     is_listening = listenForConnections(listening_sock_fd, backlog);
 
     if (is_listening == -1)
     {
-        closeServer(int sock_fd); // Clean up server resources.
+        closeServer(listening_sock_fd); // Clean up server resources.
         throwError("Failed to listen.", TRUE);
     }
 
@@ -90,14 +89,14 @@ void startServer(int port)
     }
 
     /* Close the server socket. */
-    closeServer(int sock_fd);
+    closeServer(listening_sock_fd);
     
     return;
 }
 
 void closeServer(int sock_fd)
 {
-    void closeSocket(sock_fd);
+    closeSocket(sock_fd);
     printf("Server has been shut down.\n");
     return;
 }
