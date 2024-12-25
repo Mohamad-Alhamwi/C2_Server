@@ -1,13 +1,15 @@
-#include "agent_handler.h"
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <arpa/inet.h>
+# include "agent_handler.h"
+# include "utils.h"
+# include <string.h>
+# include <unistd.h>
+# include <stdio.h>
+# include <arpa/inet.h>
 
 /* Initialize a new agent structure. */
 void initAgent(Agent *agent, int sock_fd)
 {
     agent -> sock_fd = sock_fd;
+    // TODO: implement a function for clearing.
     memset(agent -> data_buff, 0, sizeof(agent -> data_buff));  // Clear the buffer.
 }
 
@@ -33,6 +35,6 @@ ssize_t sendDataToAgent(Agent *agent, const void *msg, size_t msg_len, int flags
 /* Close agent connection. */
 void closeAgent(Agent *agent)
 {
-    close(agent -> sock_fd);
+    void closeSocket(agent -> sock_fd);
     printf("Closed connection with %s:%d\n", inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port));
 }
