@@ -1,5 +1,6 @@
-# include "agent_handler.h"
 # include "utils.h"
+# include "agent_handler.h"
+# include "socket_manager.h"
 # include <string.h>
 # include <unistd.h>
 # include <stdio.h>
@@ -35,6 +36,6 @@ ssize_t sendDataToAgent(Agent *agent, const void *msg, size_t msg_len, int flags
 /* Close agent connection. */
 void closeAgent(Agent *agent)
 {
-    void closeSocket(agent -> sock_fd);
+    closeSocket(agent -> sock_fd);
     printf("Closed connection with %s:%d\n", inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port));
 }
