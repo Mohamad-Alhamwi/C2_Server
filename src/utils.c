@@ -1,8 +1,13 @@
 #include "utils.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <errno.h>
+# include <string.h>
+
+# define FALSE 0
+# define TRUE 1
+# define CLEANUP_FILE_DESCRIPTORS 1
+# define CLEANUP_MEMORY  2
 
 void abortOperation()
 {
@@ -30,6 +35,34 @@ void throwError(const char *custom_err_msg, int should_abort)
     return;
 }
 
-// TODO: Implement a generic clean-up function cleanUp(, switch).
+void cleanUpResources(int cleanup_type, void *resource)
+{
+    switch (cleanup_type)
+    {
+        case CLEANUP_FILE_DESCRIPTORS:
+            if (resource != NULL)
+            {
+                int *fd = (int *) resource; // Cast to int pointer.
+                if (*fd >= 0)
+                {
+                    close(*fd);
+                    printf("Closed file descriptor %d.\n", *fd);
+                }
+            }
+            break;
+
+        case CLEANUP_MEMORY:
+            if (resource != NULL)
+            {
+                free(resource); // Free the dynamically allocated memory.
+                printf("Freed allocated memory.\n");
+            }
+            break;
+
+        default:
+            throwError("Invalid cleanup type", FALSE);
+            break;
+    }
+}
 
 // TODO: Implement a log function.
