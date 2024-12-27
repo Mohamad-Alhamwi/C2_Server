@@ -11,11 +11,11 @@ int main(int argc, char *argv[])
     // Parse command-line arguments for port and backlog.
     if(argc == 1)
     {
-        printf("Starting server with default values:\n");
-        printf("    Port: %d.\n    Backlog: %d.\n\n", port, backlog);
-        printf("Usage: %s <PORT> <BACKLOG>:\n", argv[0]);
-        printf("    <PORT>: The port on which the server will be listening for incoming connections.\n");
-        printf("    <BACKLOG>: The maximum length to which the queue of pending connections may grow.\n\n");
+        printf(INFORMATIONAL "[*] Starting server with default values:\n" RESET);
+        printf(INFORMATIONAL "\t[*] Port: %d.\n\t[*] Backlog: %d.\n\n" RESET, port, backlog);
+        printf(INFORMATIONAL "[*] Usage: %s <PORT> <BACKLOG>\n" RESET, argv[0]);
+        printf(INFORMATIONAL "\t[*] <PORT>: The port on which the server will be listening for incoming connections.\n" RESET);
+        printf(INFORMATIONAL "\t[*] <BACKLOG>: The maximum length to which the queue of pending connections may grow.\n\n" RESET);
     }
 
     if(argc >= 2)
