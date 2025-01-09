@@ -3,6 +3,22 @@
 # include "server.h"
 # include "utils.h"
 
+void printUsageInformation(int port, int backlog, const char *program_name)
+{
+    printf("\n*************************************************************************************************\n");
+    printf("* " INFORMATIONAL "[*] " RESET "Starting server with default values:\t\t\t\t\t\t\t*\n");
+    printf("*        " INFORMATIONAL "[*] " RESET "Port: %d.\t\t\t\t\t\t\t\t\t*\n", port);
+    printf("*        " INFORMATIONAL "[*] " RESET "Backlog: %d.\t\t\t\t\t\t\t\t\t*\n", backlog);
+    printf("*\t\t\t\t\t\t\t\t\t\t\t\t*\n");
+    printf("* " INFORMATIONAL "[*] " RESET "Usage: %s <PORT> <BACKLOG>\t\t\t\t\t\t\t\t*\n", program_name);
+    printf("*        " INFORMATIONAL "[*] " RESET "<PORT>: The port on which the server will be listening for incoming connections.\t*\n");
+    printf("*        " INFORMATIONAL "[*] " RESET "<BACKLOG>: The maximum length to which the queue of pending connections may grow.\t*\n");
+    printf("*************************************************************************************************\n");
+
+    return;
+}
+
+
 int main(int argc, char *argv[])
 {
     int port = 8888; // Default port.
@@ -11,11 +27,7 @@ int main(int argc, char *argv[])
     // Parse command-line arguments for port and backlog.
     if(argc == 1)
     {
-        printf(INFORMATIONAL "[*] Starting server with default values:\n" RESET);
-        printf(INFORMATIONAL "\t[*] Port: %d.\n\t[*] Backlog: %d.\n\n" RESET, port, backlog);
-        printf(INFORMATIONAL "[*] Usage: %s <PORT> <BACKLOG>\n" RESET, argv[0]);
-        printf(INFORMATIONAL "\t[*] <PORT>: The port on which the server will be listening for incoming connections.\n" RESET);
-        printf(INFORMATIONAL "\t[*] <BACKLOG>: The maximum length to which the queue of pending connections may grow.\n\n" RESET);
+        printUsageInformation(port, backlog, argv[0]);
     }
 
     if(argc >= 2)
