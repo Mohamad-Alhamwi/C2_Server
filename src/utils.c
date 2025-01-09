@@ -1,4 +1,5 @@
 # include "utils.h"
+# include <time.h>
 # include <stdio.h>
 # include <errno.h>
 # include <unistd.h>
@@ -7,7 +8,7 @@
 
 void abortOperation()
 {
-    fprintf(stderr, "Aborted.\n");
+    fprintf(stderr, ERROR "[-] " RESET "Aborted.\n");
     fflush(stderr);  // Ensure the abort message is printed.
     exit(EXIT_FAILURE);
 }
@@ -15,11 +16,9 @@ void abortOperation()
 void throwError(const char *custom_err_msg, int should_abort)
 {
     /*Handle errors that occur in a system call or library function.*/
-    fprintf(stderr, "%s.\n", custom_err_msg);
-    fflush(stderr);  // Ensure the custom error message is printed.
-    fprintf(stderr, "Error Number: %d.\n", errno);
-    fflush(stderr);  // Ensure error number is printed.
-    fprintf(stderr, "Error Description: %s.\n", strerror(errno));
+    fprintf(stderr, ERROR "[-] " RESET "Server: (%d) %s.\n", errno, custom_err_msg);
+    fflush(stderr);  // Ensure the error message is printed.
+    fprintf(stderr, ERROR "[-] " RESET "Error Description: %s.\n", strerror(errno));
     fflush(stderr);  // Ensure error description is printed.
 
     if(should_abort != FALSE)
@@ -62,6 +61,22 @@ void cleanUpResources(int cleanup_type, void *resource)
 
     return;
 }
+
+void getTime(char *buff, size_t buff_size)
+{
+    time_t now = time(NULL);
+    struct tm *local_time = localtime(&now);
+
+    if(local_time == NULL)
+    {
+        snprintf(buff, buff_size, "Uknown Time");
+        return;
+    }
+
+    // Format the time into the buffer.
+    strftime(buff, buff_size, "%Y-%m-%d %H:%M:%S", local_time);
+}
+
 
 // TODO: Implement a log function.
 
