@@ -15,8 +15,13 @@
 # define CLEANUP_FILE_DESCRIPTORS 1
 # define CLEANUP_MEMORY  2
 
+// Buffer size for storing the date and time as a formatted string.
+#define DATE_TIME_BUFFER_SIZE 32
+
+
 void abortOperation();
 void throwError(const char *custom_err_msg, int should_abort);
 void cleanUpResources(int cleanup_type, void *resource);
+void getTime(char *buff, size_t buff_size);
 
 # endif
