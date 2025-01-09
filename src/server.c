@@ -1,7 +1,7 @@
+# include "utils.h"
 # include "server.h"
 # include "socket_manager.h"
 # include "agent_handler.h"
-# include "utils.h"
 # include <arpa/inet.h>
 # include <string.h>
 # include <stdio.h>
@@ -14,6 +14,7 @@ void startServer(int port, int backlog)
     int sock_opts, is_bound, is_listening;
     Agent agent;
     ssize_t agent_data_length;
+    char time_buffer[DATE_TIME_BUFFER_SIZE];
 
     /* Create and configure the server socket. */
     listening_sock_fd = createSocket();
@@ -53,7 +54,8 @@ void startServer(int port, int backlog)
         throwError("Failed to listen.", TRUE);
     }
 
-    printf("Server is listening on port %d\n", port);
+    getTime(time_buffer, sizeof(time_buffer));
+    printf("\n" SUCCESSFUL "[+] [%s] " RESET "Server is up and running on %s:%d\n\n", time_buffer, inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
 
     /* Accept and handle connections. */
     while (1)
@@ -80,7 +82,6 @@ void startServer(int port, int backlog)
 
         while (agent_data_length > 0)
         {
-            printf("Received: %zd bytes\n", agent_data_length);
             agent_data_length = receiveAgentData(&agent, 0);
         }
 
