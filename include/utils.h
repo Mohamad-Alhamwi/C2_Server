@@ -16,8 +16,9 @@
 # define CLEANUP_MEMORY  2
 
 // Buffer size for storing the date and time as a formatted string.
-#define DATE_TIME_BUFFER_SIZE 32
+# define DATE_TIME_BUFFER_SIZE 32
 
+# include <stddef.h>
 
 void abortOperation();
 void throwError(const char *custom_err_msg, int should_abort);
