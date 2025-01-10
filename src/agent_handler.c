@@ -21,7 +21,8 @@ ssize_t receiveAgentData(Agent *agent, int flags)
 
     if (bytes_received > 0)
     {
-        printf("Received from %s:%d: %.*s\n", inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), (int)bytes_received, agent -> data_buff);
+        // TODO: Why type casting (int)bytes_received???
+        printf("Received (%zd bytes) from %s:%d\n", bytes_received, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port));
     }
 
     return bytes_received;
