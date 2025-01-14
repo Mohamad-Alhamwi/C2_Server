@@ -1,10 +1,11 @@
-# include "utils.h"
-# include <time.h>
-# include <stdio.h>
-# include <errno.h>
-# include <unistd.h>
-# include <stdlib.h>
-# include <string.h>
+#include <time.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "shared/utils.h"
 
 void abortOperation()
 {
@@ -76,7 +77,6 @@ void getTime(char *buff, size_t buff_size)
     // Format the time into the buffer.
     strftime(buff, buff_size, "%Y-%m-%d %H:%M:%S", local_time);
 }
-
 
 // TODO: Implement a log function.
 
