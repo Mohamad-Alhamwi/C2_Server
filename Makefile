@@ -1,23 +1,40 @@
-# Compiler and flags
+# Compiler and flags.
 CC = gcc
 CFLAGS = -Wall -Iinclude
 
-# Source files and object files
-SRC = src/agent_handler.c src/server.c src/socket_manager.c src/utils.c main.c
-OBJ = src/agent_handler.o src/server.o src/socket_manager.o src/utils.o main.o
+# Source files for server and agent.
+SERVER_SRC = main_server.c src/server/server.c src/server/agent_handler.c src/shared/socket_manager.c src/shared/utils.c
+AGENT_SRC = main_agent.c src/agent/agent.c src/agent/server_handler.c src/shared/socket_manager.c src/shared/utils.c
 
-# Default target
-all: server
+# Object files for server and agent.
+SERVER_OBJ = $(SERVER_SRC:.c=.o)
+AGENT_OBJ = $(AGENT_SRC:.c=.o)
 
-# Build the server executable
-server: $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o server
-	@rm -f $(OBJ) # Remove all .o files after linking
+# Executables.
+SERVER_EXEC = server
+AGENT_EXEC = agent
 
-# Compile each .c file into its corresponding .o file
-%.o: %.c
+# Default target.
+all: $(SERVER_EXEC) $(AGENT_EXEC)
+
+# Build the server executable.
+$(SERVER_EXEC): $(SERVER_OBJ)
+	$(CC) $(CFLAGS) $(SERVER_OBJ) -o $(SERVER_EXEC)
+
+# Build the agent executable.
+$(AGENT_EXEC): $(AGENT_OBJ)
+	$(CC) $(CFLAGS) $(AGENT_OBJ) -o $(AGENT_EXEC)
+
+# Compile each .c file into its corresponding .o file.
+src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Clean up build files
+main_server.o: main_server.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+main_agent.o: main_agent.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Clean up object files.
 clean:
-	rm -f server $(OBJ)
+	rm -f $(SERVER_OBJ) $(AGENT_OBJ) main_server.o main_agent.o
