@@ -1,9 +1,10 @@
-# include "socket_manager.h"
-# include "utils.h"
-# include <stdio.h>
-# include <stdlib.h>
-# include <errno.h>
-# include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+
+#include "shared/utils.h"
+#include "shared/socket_manager.h"
 
 int createSocket()
 {
@@ -29,6 +30,11 @@ int listenForConnections(int listening_sock_fd, int connections_len)
 int acceptConnections(int listening_sock_fd, struct sockaddr *restrict client_addr, socklen_t *restrict addr_len)
 {
     return accept(listening_sock_fd, client_addr, addr_len);
+}
+
+int connectToAddress(int sock_fd, const struct sockaddr *addr, socklen_t addr_len)
+{
+    return connect(sock_fd, addr, addr_len);
 }
 
 void closeSocket(int sock_fd)
