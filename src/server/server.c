@@ -15,7 +15,7 @@ void startServer(int port, int backlog)
     int sock_opts, is_bound, is_listening;
     Agent agent;
     ssize_t agent_data_length;
-    char time_buffer[DATE_TIME_BUFFER_SIZE];
+    char time_buff[DATE_TIME_BUFFER_SIZE];
 
     /* Create and configure the server socket. */
     listening_sock_fd = createSocket();
@@ -55,8 +55,8 @@ void startServer(int port, int backlog)
         throwError("Failed to listen.", TRUE);
     }
 
-    getTime(time_buffer, sizeof(time_buffer));
-    printf("\n"INFORMATIONAL "[%s] " RESET  SUCCESSFUL "[+] " RESET "Server is up and running on %s:%d\n\n", time_buffer, inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
+    getTime(time_buff, sizeof(time_buff));
+    printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Server is up and running on %s:%d\n\n", time_buff, inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
 
     /* Accept and handle connections. */
     while (1)
@@ -99,6 +99,10 @@ void startServer(int port, int backlog)
 void closeServer(int sock_fd)
 {
     closeSocket(sock_fd);
-    printf("Server has been shut down.\n");
+
+    char time_buff[DATE_TIME_BUFFER_SIZE];
+    getTime(time_buff, sizeof(time_buff));
+
+    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Server has been shut down.\n", time_buff);
     return;
 }
