@@ -1,7 +1,8 @@
 # include <stdio.h>
 # include <stdlib.h>
-# include "server.h"
-# include "utils.h"
+
+# include "shared/utils.h"
+# include "server/server.h"
 
 void printUsageInformation(int port, int backlog, const char *program_name)
 {
