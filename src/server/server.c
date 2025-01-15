@@ -1,11 +1,12 @@
-# include "utils.h"
-# include "server.h"
-# include "socket_manager.h"
-# include "agent_handler.h"
-# include <arpa/inet.h>
-# include <string.h>
-# include <stdio.h>
-# include <unistd.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+
+#include "shared/utils.h"
+#include "shared/socket_manager.h"
+#include "server/server.h"
+#include "server/agent_handler.h"
 
 void startServer(int port, int backlog)
 {
@@ -21,7 +22,7 @@ void startServer(int port, int backlog)
 
     if(listening_sock_fd == -1)
     {
-        throwError("Failed to create a socket.", TRUE);
+        throwError("Failed to create socket.", TRUE);
     }
 
     /* Set socket options. */
@@ -55,7 +56,7 @@ void startServer(int port, int backlog)
     }
 
     getTime(time_buffer, sizeof(time_buffer));
-    printf("\n" SUCCESSFUL "[+] [%s] " RESET "Server is up and running on %s:%d\n\n", time_buffer, inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
+    printf("\n"INFORMATIONAL "[%s] " RESET  SUCCESSFUL "[+] " RESET "Server is up and running on %s:%d\n\n", time_buffer, inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
 
     /* Accept and handle connections. */
     while (1)
@@ -86,7 +87,7 @@ void startServer(int port, int backlog)
         }
 
         /* Close the agent connection after communication ends. */
-        closeAgent(&agent);
+        killAgent(&agent);
     }
 
     /* Close the server socket. */
