@@ -1,13 +1,13 @@
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-# include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 #include <arpa/inet.h>
 
-# include "shared/utils.h"
-# include "shared/socket_manager.h"
-# include "agent/agent.h"
-# include "agent/server_handler.h"
+#include "shared/utils.h"
+#include "shared/socket_manager.h"
+#include "agent/agent.h"
+#include "agent/server_handler.h"
 
 void startAgent(const char *server_ip, int server_port) 
 {
@@ -55,4 +55,12 @@ void startAgent(const char *server_ip, int server_port)
         send(sock_fd, result, strlen(result), 0);
 
     //TODO: logic is not completed here.
+}
+
+void closeAgent(int sock_fd)
+{
+    closeSocket(sock_fd);
+    printf("Agent has been terminated.\n");
+    
+    return;
 }
