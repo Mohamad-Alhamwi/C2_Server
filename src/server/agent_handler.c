@@ -1,10 +1,11 @@
-# include "utils.h"
-# include "agent_handler.h"
-# include "socket_manager.h"
-# include <string.h>
-# include <unistd.h>
-# include <stdio.h>
-# include <arpa/inet.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <arpa/inet.h>
+
+#include "shared/utils.h"
+#include "shared/socket_manager.h"
+#include "server/agent_handler.h"
 
 /* Initialize a new agent structure. */
 void initAgent(Agent *agent, int sock_fd)
@@ -35,7 +36,7 @@ ssize_t sendDataToAgent(Agent *agent, const void *msg, size_t msg_len, int flags
 }
 
 /* Close agent connection. */
-void closeAgent(Agent *agent)
+void killAgent(Agent *agent)
 {
     closeSocket(agent -> sock_fd);
     printf("Closed connection with %s:%d\n", inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port));
