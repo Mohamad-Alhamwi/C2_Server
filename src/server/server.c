@@ -22,7 +22,7 @@ void startServer(int port, int backlog)
 
     if(listening_sock_fd == -1)
     {
-        throwError("Failed to create socket.", TRUE);
+        throwError("Failed to create socket", TRUE);
     }
 
     /* Set socket options. */
@@ -31,17 +31,17 @@ void startServer(int port, int backlog)
     if(sock_opts == -1)
     {
         closeServer(listening_sock_fd); // Clean up server resources.
-        throwError("Failed to set socket options.", TRUE);
+        throwError("Failed to set socket options", TRUE);
     }
 
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
-    server_addr.sin_addr.s_addr = INADDR_ANY;    // Bind the server to all available IP addresses on the host.
-    memset(&(server_addr.sin_zero), '\0', 8);    // Zero the rest of the struct.
+    server_addr.sin_addr.s_addr = INADDR_ANY;        // Bind the server to all available IP addresses on the host.
+    zeroBuffer(&(server_addr.sin_zero), '\0', 8);    // Zero the rest of the struct.
 
     is_bound = bindSocketToIp(listening_sock_fd, (struct sockaddr *) &server_addr, sizeof(server_addr));
 
-    if (is_bound == -1)
+    if(is_bound == -1)
     {
         closeServer(listening_sock_fd); // Clean up server resources.
         throwError("Failed to bind socket", TRUE);
@@ -49,41 +49,60 @@ void startServer(int port, int backlog)
 
     is_listening = listenForConnections(listening_sock_fd, backlog);
 
-    if (is_listening == -1)
+    if(is_listening == -1)
     {
         closeServer(listening_sock_fd); // Clean up server resources.
-        throwError("Failed to listen.", TRUE);
+        throwError("Failed to listen", TRUE);
     }
 
     getTime(time_buff, sizeof(time_buff));
     printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Server is up and running on %s:%d\n\n", time_buff, inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
 
-    /* Accept and handle connections. */
-    while (1)
+    /* Listening while for accepting connections. */
+    while(TRUE)
     {
         // Accept a new connection.
         agent.addr_len = sizeof(struct sockaddr_in);
-        int new_sock_fd = acceptConnections(listening_sock_fd, (struct sockaddr *) &agent.addr, &agent.addr_len);
+        int agent_sock_fd = acceptConnections(listening_sock_fd, (struct sockaddr *) &agent.addr, &agent.addr_len);
         
-        if (new_sock_fd == -1)
+        if(agent_sock_fd == -1)
         {   
-            /*Log the error, skip the current iteration, and retry accepting connections.*/
-            throwError("Failed to accept connection.", FALSE);
+            /* Log the error, skip the current iteration, and retry accepting connections. */
+            throwError("Failed to accept connection", FALSE);
             continue;
         }
 
         // Initialize agent.
-        initAgent(&agent, new_sock_fd);
+        initAgent(&agent, agent_sock_fd);
 
         // Send a message to the connected agent.
-        // TODO: Add a check for sendDataToAgent().
-        sendDataToAgent(&agent, "Hello, world!\n", 13, 0);
+        ssize_t is_sent = sendDataToAgent(&agent, "Hello, world!\n", 14, 0);
 
-        agent_data_length = receiveAgentData(&agent, 0);
+        if(is_sent == -1)
+        {   
+            // TODO: Add a mechanism to resend data to agent. For now you are just killing the existing one
+            // and proceeding to the next one. 
+            throwError("Failed to send data to agent", FALSE);
+            killAgent(&agent);
+            continue;
+        }
 
-        while (agent_data_length > 0)
+        /* Handling while for handling connections. */
+        while(TRUE)
         {
             agent_data_length = receiveAgentData(&agent, 0);
+
+            if(agent_data_length == -1)
+            {
+                // TODO: Add a mechanism to investigate the problem further. For now just kill the agent and move on.
+                throwError("Error occurred while receiveing data from agent", FALSE);
+                break;
+            }
+
+            if(agent_data_length == 0)
+            {
+                break;
+            }
         }
 
         /* Close the agent connection after communication ends. */
@@ -103,6 +122,6 @@ void closeServer(int sock_fd)
     char time_buff[DATE_TIME_BUFFER_SIZE];
     getTime(time_buff, sizeof(time_buff));
 
-    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Server has been shut down.\n", time_buff);
+    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Server has been shut down\n", time_buff);
     return;
 }
