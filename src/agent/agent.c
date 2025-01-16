@@ -21,46 +21,68 @@ void startAgent(const char *server_ip, int server_port)
 
     if (sock_fd == -1)
     {
-        throwError("Failed to create socket.", TRUE);
+        throwError("Failed to create socket", TRUE);
     }
 
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(server_port);            /* Host to network short. */
-    inet_pton(AF_INET, server_ip, &server_addr.sin_addr); /* Converts an IPv4 address from its text (human-readable) format to its numeric (binary) form. */
+    server_addr.sin_addr.s_addr = inet_addr(server_ip);
 
     int is_connected = connectToAddress(sock_fd, (struct sockaddr *) &server_addr, sizeof(server_addr));
 
     if(is_connected == -1) 
     {
         closeAgent(sock_fd); // Clean up agent resources.
-        throwError("Failed to connect to the server.", TRUE);
+        throwError("Failed to connect to the server", TRUE);
     }
 
     getTime(time_buff, sizeof(time_buff));
-    printf("\n" SUCCESSFUL "[+] [%s] " RESET "Connected to server at %s:%d\n", time_buff, server_ip, server_port);
+    printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Connected to server at %s:%d\n\n", time_buff, server_ip, server_port);
 
-    server_data_length = receiveServerData(sock_fd, server_data_buff, sizeof(server_data_buff), 0);
+    initializeBuffer(server_data_buff, 0, sizeof(server_data_buff));
 
-    while (server_data_length > 0)
+     /* Handling while for handling communication with server. */
+    while(TRUE)
     {
         server_data_length = receiveServerData(sock_fd, server_data_buff, sizeof(server_data_buff), 0);
+        
+        if(server_data_length == -1)
+        {
+            // TODO: Add a mechanism to investigate the problem further. For now just kill the agent.
+            closeAgent(sock_fd);
+            throwError("Error occurred while receiveing data from the server", TRUE);
+        }
+
+        /* Loop exits gracefully. */
+        if(server_data_length == 0)
+        {
+            getTime(time_buff, sizeof(time_buff));
+            printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" INFORMATIONAL "*" RESET "] " "Server closed the connection\n", time_buff);
+            break;
+        }
+
+        // Send a message back to the server after processing.
+        ssize_t is_sent = sendDataToServer(sock_fd, "Command executed successfully\n", 31, 0);
+
+        if(is_sent == -1)
+        {
+            closeAgent(sock_fd);
+            throwError("Failed to send data to server", TRUE);
+        }
     }
 
-        //server_data_buff[server_data_length] = '\0';  // Null-terminate the received data.
-        printf("Received command: %s\n", server_data_buff);
-
-        char result[1024] = "Command executed successfully.";
-        // Simulate command execution and response.
-        send(sock_fd, result, strlen(result), 0);
-
-    //TODO: logic is not completed here.
+    closeAgent(sock_fd);
 }
 
 void closeAgent(int sock_fd)
 {
     closeSocket(sock_fd);
-    printf("Agent has been terminated.\n");
+
+    char time_buff[DATE_TIME_BUFFER_SIZE];
+    getTime(time_buff, sizeof(time_buff));
+    
+    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Agent has been terminated\n", time_buff);
     
     return;
 }
