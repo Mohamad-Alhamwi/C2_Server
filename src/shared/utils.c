@@ -12,7 +12,7 @@ void abortOperation()
     char time_buff[DATE_TIME_BUFFER_SIZE];
     getTime(time_buff, sizeof(time_buff));
 
-    fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Aborted.\n", time_buff);
+    fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Aborted\n", time_buff);
     fflush(stderr);  // Ensure the abort message is printed.
     exit(EXIT_FAILURE);
 }
@@ -23,9 +23,9 @@ void throwError(const char *custom_err_msg, int should_abort)
     char time_buff[DATE_TIME_BUFFER_SIZE];
     getTime(time_buff, sizeof(time_buff));
 
-    fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Server: (%d) %s.\n", time_buff, errno, custom_err_msg);
+    fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Server: (%d) %s\n", time_buff, errno, custom_err_msg);
     fflush(stderr);  // Ensure the error message is printed.
-    fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Error Description: %s.\n", time_buff, strerror(errno));
+    fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Error Description: %s\n", time_buff, strerror(errno));
     fflush(stderr);  // Ensure error description is printed.
 
     if(should_abort != FALSE)
@@ -52,7 +52,7 @@ void cleanUpResources(int cleanup_type, void *resource)
                 {
                     close(*fd);
                     getTime(time_buff, sizeof(time_buff));
-                    printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed file descriptor %d.\n", time_buff, *fd);
+                    printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed file descriptor %d\n", time_buff, *fd);
                 }
             }
             break;
@@ -61,7 +61,7 @@ void cleanUpResources(int cleanup_type, void *resource)
             if (resource != NULL)
             {
                 free(resource); // Free the dynamically allocated memory.
-                printf("Freed allocated memory.\n");
+                printf("Freed allocated memory\n");
             }
             break;
 
@@ -87,6 +87,16 @@ void getTime(char *buff, size_t buff_size)
     // Format the time into the buffer.
     strftime(buff, buff_size, "%Y-%m-%d %H:%M:%S", local_time);
 }
+
+void initializeBuffer(void * ptr, int value, size_t num)
+{
+    memset(ptr, value, num);
+    return;
+}
+
+// Define an alias for initializeBuffer().
+void (*zeroBuffer)(void *, int, size_t) = initializeBuffer;
+
 
 // TODO: Implement a log function.
 
