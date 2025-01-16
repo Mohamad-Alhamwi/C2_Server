@@ -21,9 +21,14 @@
 #define DATE_TIME_BUFFER_SIZE 32
 #define DATA_BUFFER_SIZE 1024
 
+// Function prototypes.
 void abortOperation();
 void throwError(const char *custom_err_msg, int should_abort);
 void cleanUpResources(int cleanup_type, void *resource);
 void getTime(char *buff, size_t buff_size);
+void initializeBuffer(void * ptr, int value, size_t num);
+
+// Function aliases.
+extern void (*zeroBuffer)(void *, int, size_t);
 
 #endif
