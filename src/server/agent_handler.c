@@ -11,8 +11,7 @@
 void initAgent(Agent *agent, int sock_fd)
 {
     agent -> sock_fd = sock_fd;
-    // TODO: implement a function for clearing.
-    memset(agent -> data_buff, 0, sizeof(agent -> data_buff));  // Clear the buffer.
+    initializeBuffer(agent -> data_buff, 0, sizeof(agent -> data_buff));
 }
 
 /* Receive data from agent. */
@@ -25,6 +24,7 @@ ssize_t receiveAgentData(Agent *agent, int flags)
     {
         getTime(time_buff, sizeof(time_buff));
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "[%s:%d ----> Server]" " Received (%zd bytes)\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), bytes_received);
+        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from %s:%d: %s\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), agent -> data_buff);
     }
 
     return bytes_received;
@@ -43,7 +43,7 @@ void killAgent(Agent *agent)
 
     char time_buff[DATE_TIME_BUFFER_SIZE];
     getTime(time_buff, sizeof(time_buff));
-    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed connection with %s:%d.\n\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port));
+    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed connection with %s:%d\n\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port));
 
     return;
 }
