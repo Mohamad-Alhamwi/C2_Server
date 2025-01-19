@@ -24,7 +24,7 @@ ssize_t receiveAgentData(Agent *agent, int flags)
     {
         getTime(time_buff, sizeof(time_buff));
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "[%s:%d ----> Server]" " Received (%zd bytes)\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), bytes_received);
-        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from %s:%d: %s\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), agent -> data_buff);
+        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from %s:%d: %s\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), trimTrailing(agent -> data_buff));
     }
 
     return bytes_received;
