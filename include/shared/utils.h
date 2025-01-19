@@ -27,6 +27,9 @@ void throwError(const char *custom_err_msg, int should_abort);
 void cleanUpResources(int cleanup_type, void *resource);
 void getTime(char *buff, size_t buff_size);
 void initializeBuffer(void * ptr, int value, size_t num);
+const char *trimLeading(const char *str);
+char *trimTrailing(const char *str);
+char *trimString(const char *str);
 
 // Function aliases.
 extern void (*zeroBuffer)(void *, int, size_t);

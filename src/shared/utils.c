@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <ctype.h>
 #include "shared/utils.h"
 
 void abortOperation()
@@ -97,6 +97,76 @@ void initializeBuffer(void * ptr, int value, size_t num)
 // Define an alias for initializeBuffer().
 void (*zeroBuffer)(void *, int, size_t) = initializeBuffer;
 
+const char *trimLeading(const char *str)
+{
+    /*
+        *A function that trims leading whitespace by leveraging the built-in function isspace(), which checks for:
+        *Space (' ').
+        *Form feed ('\f').
+        *Newline ('\n').
+        *Carriage return ('\r').
+        *Horizontal tab ('\t').
+        *Vertical tab ('\v').
+    */
+
+    while (isspace((unsigned char) *str))
+    {
+        str++;
+    }
+
+    return str; // Return the pointer to the trimmed string.
+}
+
+char *trimTrailing(const char *str)
+{
+    /*
+        *A function that trims trailing whitespace by leveraging the built-in function isspace(), which checks for:
+        *Space (' ').
+        *Form feed ('\f').
+        *Newline ('\n').
+        *Carriage return ('\r').
+        *Horizontal tab ('\t').
+        *Vertical tab ('\v').
+    */
+
+    // Make `end` point to the last element of the string.
+    const char *end = str + strlen(str) - 1;
+
+    // Move `end` backwards over trailing whitespace.
+    while(end >= str && isspace((unsigned char)*end))
+    {
+        end--;
+    }
+
+    // Calculate the length of the trimmed string.
+    size_t trimmed_length = (size_t) (end - str + 1);
+
+    // Allocate memory for the trimmed string and account for the null-terminator.
+    char *trimmed = malloc(trimmed_length + 1);
+    if(!trimmed)
+    {
+        throwError("Failed to allocate memory", TRUE);
+    }
+
+    // Copy the trimmed string and null-terminate it.
+    strncpy(trimmed, str, trimmed_length);
+    trimmed[trimmed_length] = '\0';
+
+     // Return the pointer to the trimmed string.
+    return trimmed;
+}
+
+// Trim both leading and trailing whitespace.
+char *trimString(const char *str) 
+{
+    // Trim leading whitespace
+    const char *leading_trimmed = trimLeading(str);
+
+    // Trim trailing whitespace
+    char *fully_trimmed = trimTrailing(leading_trimmed);
+
+    return fully_trimmed;
+}
 
 // TODO: Implement a log function.
 
