@@ -2,11 +2,12 @@
 
 ## Message Structure
 Every message has:
-1- Components.
-2- Delimiters.
+1. Components.
+2. Delimiters.
 
 ### 1. Message Components
-Each message contains four mandatory components, each serving a distinct and essential purpose. Components are separated by the delimiter `|`, and each component contains a key-value pair separated by the delimiter `:` for clarity and structure.
+Each message contains four mandatory components, each serving a distinct and essential purpose.
+Components are separated by the delimiter `|`, and each component contains a key-value pair separated by the delimiter `:` for clarity and structure.
 
 #### 1.1. ID:
 A unique identifier used to:
