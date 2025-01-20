@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <arpa/inet.h>
 
+#include "shared/time.h"
 #include "shared/utils.h"
 #include "agent/server_handler.h"
 
@@ -12,7 +13,7 @@ ssize_t receiveServerData(int sock_fd, char *data_buff, size_t data_buff_size, i
 
     if (bytes_received > 0)
     {
-        getTime(time_buff, sizeof(time_buff));
+        getTime(time_buff, FORMAT_FULL_DATETIME);
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received (%zd bytes) from the server\n", time_buff, bytes_received);
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from the server: %s\n", time_buff, trimTrailing(data_buff));
     }

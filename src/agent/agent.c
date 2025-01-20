@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 
+#include "shared/time.h"
 #include "shared/utils.h"
 #include "shared/socket_manager.h"
 #include "agent/agent.h"
@@ -37,7 +38,7 @@ void startAgent(const char *server_ip, int server_port)
         throwError("Failed to connect to the server", TRUE);
     }
 
-    getTime(time_buff, sizeof(time_buff));
+    getTime(time_buff, FORMAT_FULL_DATETIME);
     printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Connected to server at %s:%d\n\n", time_buff, server_ip, server_port);
 
     initializeBuffer(server_data_buff, 0, sizeof(server_data_buff));
@@ -57,7 +58,7 @@ void startAgent(const char *server_ip, int server_port)
         /* Loop exits gracefully. */
         if(server_data_length == 0)
         {
-            getTime(time_buff, sizeof(time_buff));
+            getTime(time_buff, FORMAT_FULL_DATETIME);
             printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" INFORMATIONAL "*" RESET "] " "Server closed the connection\n", time_buff);
             break;
         }
@@ -80,7 +81,7 @@ void closeAgent(int sock_fd)
     closeSocket(sock_fd);
 
     char time_buff[DATE_TIME_BUFFER_SIZE];
-    getTime(time_buff, sizeof(time_buff));
+    getTime(time_buff, FORMAT_FULL_DATETIME);
     
     printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Agent has been terminated\n", time_buff);
     

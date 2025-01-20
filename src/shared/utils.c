@@ -1,16 +1,18 @@
-#include <time.h>
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
+
+#include "shared/time.h"
 #include "shared/utils.h"
 
 void abortOperation()
 {
     char time_buff[DATE_TIME_BUFFER_SIZE];
-    getTime(time_buff, sizeof(time_buff));
+    getTime(time_buff, FORMAT_FULL_DATETIME);
 
     fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Aborted\n", time_buff);
     fflush(stderr);  // Ensure the abort message is printed.
@@ -21,7 +23,7 @@ void throwError(const char *custom_err_msg, int should_abort)
 {
     /* Handle errors that occur in a system call or library function .*/
     char time_buff[DATE_TIME_BUFFER_SIZE];
-    getTime(time_buff, sizeof(time_buff));
+    getTime(time_buff, FORMAT_FULL_DATETIME);
 
     fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Server: (%d) %s\n", time_buff, errno, custom_err_msg);
     fflush(stderr);  // Ensure the error message is printed.
@@ -51,7 +53,7 @@ void cleanUpResources(int cleanup_type, void *resource)
                 if (*fd >= 0)
                 {
                     close(*fd);
-                    getTime(time_buff, sizeof(time_buff));
+                    getTime(time_buff, FORMAT_FULL_DATETIME);
                     printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed file descriptor %d\n", time_buff, *fd);
                 }
             }
@@ -61,6 +63,7 @@ void cleanUpResources(int cleanup_type, void *resource)
             if (resource != NULL)
             {
                 free(resource); // Free the dynamically allocated memory.
+                // TODO: Nullify the pointer. (Use-after-free, Double free).
                 printf("Freed allocated memory\n");
             }
             break;
@@ -71,21 +74,6 @@ void cleanUpResources(int cleanup_type, void *resource)
     }
 
     return;
-}
-
-void getTime(char *buff, size_t buff_size)
-{
-    time_t now = time(NULL);
-    struct tm *local_time = localtime(&now);
-
-    if(local_time == NULL)
-    {
-        snprintf(buff, buff_size, "Uknown Time");
-        return;
-    }
-
-    // Format the time into the buffer.
-    strftime(buff, buff_size, "%Y-%m-%d %H:%M:%S", local_time);
 }
 
 void initializeBuffer(void * ptr, int value, size_t num)
@@ -159,14 +147,16 @@ char *trimTrailing(const char *str)
 // Trim both leading and trailing whitespace.
 char *trimString(const char *str) 
 {
-    // Trim leading whitespace
+    // Trim leading whitespace.
     const char *leading_trimmed = trimLeading(str);
 
-    // Trim trailing whitespace
+    // Trim trailing whitespace.
     char *fully_trimmed = trimTrailing(leading_trimmed);
 
     return fully_trimmed;
 }
+
+// TODO: Cleanup after calling trimString and trimTrailing.
 
 // TODO: Implement a log function.
 
