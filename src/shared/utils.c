@@ -5,7 +5,6 @@
 #include <string.h>
 #include <ctype.h>
 
-
 #include "shared/time.h"
 #include "shared/utils.h"
 
@@ -75,15 +74,6 @@ void cleanUpResources(int cleanup_type, void *resource)
 
     return;
 }
-
-void initializeBuffer(void * ptr, int value, size_t num)
-{
-    memset(ptr, value, num);
-    return;
-}
-
-// Define an alias for initializeBuffer().
-void (*zeroBuffer)(void *, int, size_t) = initializeBuffer;
 
 const char *trimLeading(const char *str)
 {
@@ -159,7 +149,5 @@ char *trimString(const char *str)
 // TODO: Cleanup after calling trimString and trimTrailing.
 
 // TODO: Implement a log function.
-
-// TODO: Enhance getTime() by making it return time, but be ware of race conditions.
 
 // TODO: Handle buffer flushing in general.
