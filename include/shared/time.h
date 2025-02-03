@@ -11,6 +11,7 @@
 #define FORMAT_HOUR          4
 #define FORMAT_MINUTE        5
 #define FORMAT_SECOND        6
+#define FORMAT_MILLISECOND   7
 
 void getTime(char *buff, int format);
 
