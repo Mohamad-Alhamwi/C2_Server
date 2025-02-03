@@ -4,13 +4,15 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 
+#include "shared/buffer_manager.h"
+
 /* Define the Agent structure */
 typedef struct
 {
     int sock_fd;                      // Agent's socket file descriptor.
     struct sockaddr_in addr;          // Agent's address (IP, port).
     socklen_t addr_len;               // Agent's address length.
-    char data_buff [DATA_BUFFER_SIZE];            // Buffer for communication.
+    char data_buff [MSG_BUFF_SIZE];            // Buffer for communication.
 } Agent;
 
 /* Agent handler functions */

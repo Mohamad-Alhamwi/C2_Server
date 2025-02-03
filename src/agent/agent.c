@@ -7,6 +7,7 @@
 #include "shared/time.h"
 #include "shared/utils.h"
 #include "shared/socket_manager.h"
+#include "shared/buffer_manager.h"
 #include "agent/agent.h"
 #include "agent/server_handler.h"
 
@@ -14,7 +15,7 @@ void startAgent(const char *server_ip, int server_port)
 {
     int sock_fd;
     char time_buff[DATE_TIME_BUFFER_SIZE];
-    char server_data_buff[DATA_BUFFER_SIZE];
+    char server_data_buff[MSG_BUFF_SIZE];
     ssize_t server_data_length;
 
     /* Create the agent socket. */

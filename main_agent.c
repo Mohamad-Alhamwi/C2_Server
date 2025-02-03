@@ -2,6 +2,7 @@
 # include <stdlib.h>
 
 # include "shared/utils.h"
+# include "shared/buffer_manager.h"
 # include "agent/agent.h"
 
 void printUsageInformation(const char *program_name)
@@ -15,6 +16,8 @@ void printUsageInformation(const char *program_name)
 
 int main(int argc, char *argv[])
 {
+    setBufferingMode();
+
     if (argc != 3)
     {
         printUsageInformation(argv[0]);

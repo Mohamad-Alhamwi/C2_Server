@@ -2,6 +2,7 @@
 # include <stdlib.h>
 
 # include "shared/utils.h"
+# include "shared/buffer_manager.h"
 # include "server/server.h"
 
 void printUsageInformation(int port, int backlog, const char *program_name)
@@ -24,6 +25,8 @@ int main(int argc, char *argv[])
 {
     int port = 8888; // Default port.
     int backlog = 5; // Default backlog.
+
+    setBufferingMode();
 
     // Parse command-line arguments for port and backlog.
     if(argc == 1)
