@@ -10,8 +10,8 @@
 
 void abortOperation()
 {
-    char time_buff[DATE_TIME_BUFFER_SIZE];
-    getTime(time_buff, FORMAT_FULL_DATETIME);
+    char time_buff[TIMESTAMP_BUFFER_SIZE];
+    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
 
     fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Aborted\n", time_buff);
     fflush(stderr);  // Ensure the abort message is printed.
@@ -21,8 +21,8 @@ void abortOperation()
 void throwError(const char *custom_err_msg, int should_abort)
 {
     /* Handle errors that occur in a system call or library function .*/
-    char time_buff[DATE_TIME_BUFFER_SIZE];
-    getTime(time_buff, FORMAT_FULL_DATETIME);
+    char time_buff[TIMESTAMP_BUFFER_SIZE];
+    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
 
     fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Server: (%d) %s\n", time_buff, errno, custom_err_msg);
     fflush(stderr);  // Ensure the error message is printed.
@@ -40,7 +40,7 @@ void throwError(const char *custom_err_msg, int should_abort)
 
 void cleanUpResources(int cleanup_type, void *resource)
 {
-    char time_buff[DATE_TIME_BUFFER_SIZE];
+    char time_buff[TIMESTAMP_BUFFER_SIZE];
 
     switch(cleanup_type)
     {
@@ -52,7 +52,7 @@ void cleanUpResources(int cleanup_type, void *resource)
                 if (*fd >= 0)
                 {
                     close(*fd);
-                    getTime(time_buff, FORMAT_FULL_DATETIME);
+                    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
                     printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed file descriptor %d\n", time_buff, *fd);
                 }
             }

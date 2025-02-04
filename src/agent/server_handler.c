@@ -8,12 +8,12 @@
 /* Receive data from server. */
 ssize_t receiveServerData(int sock_fd, char *data_buff, size_t data_buff_size, int flags)
 {
-    char time_buff[DATE_TIME_BUFFER_SIZE];
+    char time_buff[TIMESTAMP_BUFFER_SIZE];
     ssize_t bytes_received = recv(sock_fd, data_buff, data_buff_size, flags);
 
     if (bytes_received > 0)
     {
-        getTime(time_buff, FORMAT_FULL_DATETIME);
+        getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received (%zd bytes) from the server\n", time_buff, bytes_received);
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from the server: %s\n", time_buff, trimTrailing(data_buff));
     }

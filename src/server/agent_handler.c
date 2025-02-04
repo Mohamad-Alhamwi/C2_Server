@@ -18,12 +18,12 @@ void initAgent(Agent *agent, int sock_fd)
 /* Receive data from agent. */
 ssize_t receiveAgentData(Agent *agent, int flags)
 {
-    char time_buff[DATE_TIME_BUFFER_SIZE];
+    char time_buff[TIMESTAMP_BUFFER_SIZE];
     ssize_t bytes_received = recv(agent -> sock_fd, agent -> data_buff, sizeof(agent -> data_buff), flags);
 
     if (bytes_received > 0)
     {
-        getTime(time_buff, FORMAT_FULL_DATETIME);
+        getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "[%s:%d ----> Server]" " Received (%zd bytes)\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), bytes_received);
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from %s:%d: %s\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), trimTrailing(agent -> data_buff));
     }
@@ -42,8 +42,8 @@ void killAgent(Agent *agent)
 {
     closeSocket(agent -> sock_fd);
 
-    char time_buff[DATE_TIME_BUFFER_SIZE];
-    getTime(time_buff, FORMAT_FULL_DATETIME);
+    char time_buff[TIMESTAMP_BUFFER_SIZE];
+    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
     printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed connection with %s:%d\n\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port));
 
     return;

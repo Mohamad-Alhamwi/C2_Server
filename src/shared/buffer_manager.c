@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "shared/buffer_manager.h"
 
