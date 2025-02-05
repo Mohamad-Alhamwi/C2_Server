@@ -14,27 +14,37 @@ void abortOperation()
     getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
 
     fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Aborted\n", time_buff);
-    fflush(stderr);  // Ensure the abort message is printed.
     exit(EXIT_FAILURE);
 }
 
-void throwError(const char *custom_err_msg, int should_abort)
+void throwError(const char *custom_err_msg, const char *custom_err_description, int should_abort)
 {
-    /* Handle errors that occur in a system call or library function .*/
     char time_buff[TIMESTAMP_BUFFER_SIZE];
     getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
 
-    fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Server: (%d) %s\n", time_buff, errno, custom_err_msg);
-    fflush(stderr);  // Ensure the error message is printed.
-    fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Error Description: %s\n", time_buff, strerror(errno));
-    fflush(stderr);  // Ensure error description is printed.
+    /* Handle custom errors. */
+    if (errno == 0)  // 
+    {
+        fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Error (%d): %s\n",
+                time_buff, CUSTOM_ERR_NO, custom_err_msg);
+        fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Description: %s\n",
+                time_buff, custom_err_description);
+    }
+    /* Handle system errors. */
+    else  
+    {
+        fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Error (%d): %s\n",
+                time_buff, errno, custom_err_msg);
+        fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Description: %s\n",
+                time_buff, strerror(errno));
+    }
 
-    if(should_abort != FALSE)
+    /* Abort execution if needed. */
+    if (should_abort)
     {
         abortOperation();
     }
 
-    // TODO: Handle custom errors.
     return;
 }
 
@@ -42,7 +52,7 @@ void cleanUpResources(int cleanup_type, void *resource)
 {
     char time_buff[TIMESTAMP_BUFFER_SIZE];
 
-    switch(cleanup_type)
+    switch (cleanup_type)
     {
         case CLEANUP_FILE_DESCRIPTORS:
             if (resource != NULL)
@@ -62,13 +72,13 @@ void cleanUpResources(int cleanup_type, void *resource)
             if (resource != NULL)
             {
                 free(resource); // Free the dynamically allocated memory.
-                // TODO: Nullify the pointer. (Use-after-free, Double free).
+                resource = NULL;
                 printf("Freed allocated memory\n");
             }
             break;
 
         default:
-            throwError("Invalid cleanup type", FALSE);
+            throwError("Failed to clean up resource", "Invalid cleanup type", FALSE);
             break;
     }
 
@@ -77,16 +87,6 @@ void cleanUpResources(int cleanup_type, void *resource)
 
 const char *trimLeading(const char *str)
 {
-    /*
-        *A function that trims leading whitespace by leveraging the built-in function isspace(), which checks for:
-        *Space (' ').
-        *Form feed ('\f').
-        *Newline ('\n').
-        *Carriage return ('\r').
-        *Horizontal tab ('\t').
-        *Vertical tab ('\v').
-    */
-
     while (isspace((unsigned char) *str))
     {
         str++;
@@ -97,21 +97,11 @@ const char *trimLeading(const char *str)
 
 char *trimTrailing(const char *str)
 {
-    /*
-        *A function that trims trailing whitespace by leveraging the built-in function isspace(), which checks for:
-        *Space (' ').
-        *Form feed ('\f').
-        *Newline ('\n').
-        *Carriage return ('\r').
-        *Horizontal tab ('\t').
-        *Vertical tab ('\v').
-    */
-
     // Make `end` point to the last element of the string.
     const char *end = str + strlen(str) - 1;
 
     // Move `end` backwards over trailing whitespace.
-    while(end >= str && isspace((unsigned char)*end))
+    while (end >= str && isspace((unsigned char) *end))
     {
         end--;
     }
@@ -121,9 +111,9 @@ char *trimTrailing(const char *str)
 
     // Allocate memory for the trimmed string and account for the null-terminator.
     char *trimmed = malloc(trimmed_length + 1);
-    if(!trimmed)
+    if (!trimmed)
     {
-        throwError("Failed to allocate memory", TRUE);
+        throwError("Failed to allocate memory", NULL, TRUE);
     }
 
     // Copy the trimmed string and null-terminate it.
@@ -134,7 +124,6 @@ char *trimTrailing(const char *str)
     return trimmed;
 }
 
-// Trim both leading and trailing whitespace.
 char *trimString(const char *str) 
 {
     // Trim leading whitespace.
@@ -145,8 +134,6 @@ char *trimString(const char *str)
 
     return fully_trimmed;
 }
-
-// TODO: Cleanup after calling trimString and trimTrailing.
 
 // TODO: Implement a log function.
 
