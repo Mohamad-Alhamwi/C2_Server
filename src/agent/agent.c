@@ -23,7 +23,7 @@ void startAgent(const char *server_ip, int server_port)
 
     if (sock_fd == -1)
     {
-        throwError("Failed to create socket", TRUE);
+        throwError("Failed to create socket", NULL, TRUE);
     }
 
     struct sockaddr_in server_addr;
@@ -36,7 +36,7 @@ void startAgent(const char *server_ip, int server_port)
     if(is_connected == -1) 
     {
         closeAgent(sock_fd); // Clean up agent resources.
-        throwError("Failed to connect to the server", TRUE);
+        throwError("Failed to connect to the server", NULL, TRUE);
     }
 
     getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
@@ -53,7 +53,7 @@ void startAgent(const char *server_ip, int server_port)
         {
             // TODO: Add a mechanism to investigate the problem further. For now just kill the agent.
             closeAgent(sock_fd);
-            throwError("Error occurred while receiveing data from the server", TRUE);
+            throwError("Error occurred while receiveing data from the server", NULL, TRUE);
         }
 
         /* Loop exits gracefully. */
@@ -70,7 +70,7 @@ void startAgent(const char *server_ip, int server_port)
         if(is_sent == -1)
         {
             closeAgent(sock_fd);
-            throwError("Failed to send data to server", TRUE);
+            throwError("Failed to send data to server", NULL, TRUE);
         }
     }
 

@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
 
         if(port <= 0 || port > 65535)
         {
-            throwError("Invalid port number. Please provide a port number between 1 and 65535", TRUE);
+            throwError("Invalid port number", "Please provide a port number between 1 and 65535", TRUE);
         }
     }
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
 
         if(backlog <= 0)
         {
-            throwError("Invalid backlog value. Please provide a positive integer", TRUE);
+            throwError("Invalid backlog value", "Please provide a positive integer", TRUE);
         }
     }
 
