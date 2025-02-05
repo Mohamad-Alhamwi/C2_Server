@@ -23,7 +23,7 @@ void startServer(int port, int backlog)
 
     if(listening_sock_fd == -1)
     {
-        throwError("Failed to create socket", TRUE);
+        throwError("Failed to create socket", NULL, TRUE);
     }
 
     /* Set socket options. */
@@ -32,7 +32,7 @@ void startServer(int port, int backlog)
     if(sock_opts == -1)
     {
         closeServer(listening_sock_fd); // Clean up server resources.
-        throwError("Failed to set socket options", TRUE);
+        throwError("Failed to set socket options", NULL, TRUE);
     }
 
     server_addr.sin_family = AF_INET;
@@ -45,7 +45,7 @@ void startServer(int port, int backlog)
     if(is_bound == -1)
     {
         closeServer(listening_sock_fd); // Clean up server resources.
-        throwError("Failed to bind socket", TRUE);
+        throwError("Failed to bind socket", NULL, TRUE);
     }
 
     is_listening = listenForConnections(listening_sock_fd, backlog);
@@ -53,7 +53,7 @@ void startServer(int port, int backlog)
     if(is_listening == -1)
     {
         closeServer(listening_sock_fd); // Clean up server resources.
-        throwError("Failed to listen", TRUE);
+        throwError("Failed to listen", NULL, TRUE);
     }
 
     getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
@@ -69,7 +69,7 @@ void startServer(int port, int backlog)
         if(agent_sock_fd == -1)
         {   
             /* Log the error, skip the current iteration, and retry accepting connections. */
-            throwError("Failed to accept connection", FALSE);
+            throwError("Failed to accept connection", NULL, FALSE);
             continue;
         }
 
@@ -83,7 +83,7 @@ void startServer(int port, int backlog)
         {   
             // TODO: Add a mechanism to resend data to agent. For now you are just killing the existing one
             // and proceeding to the next one. 
-            throwError("Failed to send data to agent", FALSE);
+            throwError("Failed to send data to agent", NULL, FALSE);
             killAgent(&agent);
             continue;
         }
@@ -91,12 +91,12 @@ void startServer(int port, int backlog)
         /* Handling while for handling connections. */
         while(TRUE)
         {
-            agent_data_length = receiveAgentData(&agent, 0);
+            agent_data_length = receiveAgentMessage(&agent, 0);
 
             if(agent_data_length == -1)
             {
                 // TODO: Add a mechanism to investigate the problem further. For now just kill the agent and move on.
-                throwError("Error occurred while receiveing data from agent", FALSE);
+                throwError("Error occurred while receiveing data from agent", NULL, FALSE);
                 break;
             }
 

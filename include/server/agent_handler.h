@@ -17,7 +17,7 @@ typedef struct
 
 /* Agent handler functions */
 void initAgent(Agent *agent, int sock_fd);
-ssize_t receiveAgentData(Agent *agent, int flags);
+ssize_t receiveAgentMessage(Agent *agent, int flags);
 ssize_t sendDataToAgent(Agent *agent, const void *msg, size_t msg_len, int flags);
 void killAgent(Agent *agent);
 
