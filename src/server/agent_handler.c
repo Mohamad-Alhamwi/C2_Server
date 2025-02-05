@@ -1,6 +1,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <arpa/inet.h>
 
 #include "shared/time.h"
@@ -16,16 +17,21 @@ void initAgent(Agent *agent, int sock_fd)
 }
 
 /* Receive data from agent. */
-ssize_t receiveAgentData(Agent *agent, int flags)
+ssize_t receiveAgentMessage(Agent *agent, int flags)
 {
     char time_buff[TIMESTAMP_BUFFER_SIZE];
     ssize_t bytes_received = recv(agent -> sock_fd, agent -> data_buff, sizeof(agent -> data_buff), flags);
 
     if (bytes_received > 0)
     {
+        char *trimmed_str = trimTrailing(agent->data_buff);
         getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
+        
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "[%s:%d ----> Server]" " Received (%zd bytes)\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), bytes_received);
-        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from %s:%d: %s\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), trimTrailing(agent -> data_buff));
+        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from %s:%d: %s\n", time_buff, inet_ntoa(agent -> addr.sin_addr), ntohs(agent -> addr.sin_port), trimmed_str);
+
+        free(trimmed_str);
+        trimmed_str = NULL;
     }
 
     return bytes_received;

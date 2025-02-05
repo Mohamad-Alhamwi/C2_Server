@@ -13,9 +13,14 @@ ssize_t receiveServerData(int sock_fd, char *data_buff, size_t data_buff_size, i
 
     if (bytes_received > 0)
     {
+        char *trimmed_str = trimTrailing(data_buff);
         getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
+        
         printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received (%zd bytes) from the server\n", time_buff, bytes_received);
-        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from the server: %s\n", time_buff, trimTrailing(data_buff));
+        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from the server: %s\n", time_buff, trimmed_str);
+    
+        free(trimmed_str);
+        trimmed_str = NULL;
     }
 
     return bytes_received;
