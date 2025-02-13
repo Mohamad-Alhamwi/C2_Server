@@ -20,13 +20,10 @@ void printUsageInformation(int port, int backlog, const char *program_name)
     return;
 }
 
-
 int main(int argc, char *argv[])
 {
     int port = 8888; // Default port.
     int backlog = 5; // Default backlog.
-
-    setBufferingMode();
 
     // Parse command-line arguments for port and backlog.
     if(argc == 1)

@@ -16,8 +16,6 @@ void printUsageInformation(const char *program_name)
 
 int main(int argc, char *argv[])
 {
-    setBufferingMode();
-
     if (argc != 3)
     {
         printUsageInformation(argv[0]);
