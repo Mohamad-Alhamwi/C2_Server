@@ -2,6 +2,7 @@
 # include <stdlib.h>
 
 # include "shared/utils.h"
+# include "shared/log_manager.h"
 # include "shared/buffer_manager.h"
 # include "agent/agent.h"
 

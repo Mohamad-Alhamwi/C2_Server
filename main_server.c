@@ -2,6 +2,7 @@
 # include <stdlib.h>
 
 # include "shared/utils.h"
+# include "shared/log_manager.h"
 # include "shared/buffer_manager.h"
 # include "server/server.h"
 
@@ -15,7 +16,7 @@ void printUsageInformation(int port, int backlog, const char *program_name)
     printf("* " INFORMATIONAL "[*] " RESET "Usage: %s <PORT> <BACKLOG>\t\t\t\t\t\t\t\t*\n", program_name);
     printf("*        " INFORMATIONAL "[*] " RESET "<PORT>: The port on which the server will be listening for incoming connections.\t*\n");
     printf("*        " INFORMATIONAL "[*] " RESET "<BACKLOG>: The maximum length to which the queue of pending connections may grow.\t*\n");
-    printf("*************************************************************************************************\n");
+    printf("*************************************************************************************************\n\n");
 
     return;
 }

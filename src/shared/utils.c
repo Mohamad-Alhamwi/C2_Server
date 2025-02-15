@@ -7,36 +7,28 @@
 
 #include "shared/time.h"
 #include "shared/utils.h"
+#include "shared/log_manager.h"
 
 void abortOperation()
 {
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
-    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
-
-    fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] " "Aborted\n", time_buff);
+    logTerminal(LOG_ERROR, "Aborted");
     exit(EXIT_FAILURE);
 }
 
 void throwError(const char *custom_err_msg, const char *custom_err_description, int should_abort)
 {
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
-    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
-
     /* Handle custom errors. */
-    if (errno == 0)  // 
+    if (errno == 0)
     {
-        fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Error (%d): %s\n",
-                time_buff, CUSTOM_ERR_NO, custom_err_msg);
-        fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Description: %s\n",
-                time_buff, custom_err_description);
+        logTerminal(LOG_ERROR, "Error (%d): %s", CUSTOM_ERR_NO, custom_err_msg);
+        logTerminal(LOG_ERROR, "Description: %s", custom_err_description);
     }
+
     /* Handle system errors. */
     else  
     {
-        fprintf(stderr, "\n[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Error (%d): %s\n",
-                time_buff, errno, custom_err_msg);
-        fprintf(stderr, "[" INFORMATIONAL "%s" RESET "] " "[" ERROR "-" RESET "] Description: %s\n",
-                time_buff, strerror(errno));
+        logTerminal(LOG_ERROR, "Error (%d): %s", errno, custom_err_msg);
+        logTerminal(LOG_ERROR, "Description: %s", strerror(errno));
     }
 
     /* Abort execution if needed. */
@@ -50,8 +42,6 @@ void throwError(const char *custom_err_msg, const char *custom_err_description, 
 
 void cleanUpResources(int cleanup_type, void *resource)
 {
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
-
     switch (cleanup_type)
     {
         case CLEANUP_FILE_DESCRIPTORS:
@@ -62,8 +52,7 @@ void cleanUpResources(int cleanup_type, void *resource)
                 if (*fd >= 0)
                 {
                     close(*fd);
-                    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
-                    printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Closed file descriptor %d\n", time_buff, *fd);
+                    logTerminal(LOG_INFORMATIONAL, "Closed file descriptor %d", *fd);
                 }
             }
             break;
@@ -134,7 +123,3 @@ char *trimString(const char *str)
 
     return fully_trimmed;
 }
-
-// TODO: Implement a log function.
-
-// TODO: Handle buffer flushing in general.

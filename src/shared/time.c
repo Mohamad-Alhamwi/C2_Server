@@ -4,6 +4,7 @@
 
 #include "shared/time.h"
 #include "shared/utils.h"
+#include "shared/log_manager.h"
 
 void getMilliseconds(char *buff, long nanosec)
 {

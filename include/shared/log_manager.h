@@ -17,7 +17,6 @@
 // Log file's name.
 #define LOG_FILE "server_logs.txt"
 
-void logTerminal();
-void logFile();
+void logTerminal(size_t log_type, const char *log_msg_format, ...);
 
 #endif

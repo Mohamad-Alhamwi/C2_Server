@@ -4,21 +4,20 @@
 
 #include "shared/time.h"
 #include "shared/utils.h"
+#include "shared/log_manager.h"
 #include "agent/server_handler.h"
 
 /* Receive data from server. */
 ssize_t receiveServerData(int sock_fd, char *data_buff, size_t data_buff_size, int flags)
 {
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
     ssize_t bytes_received = recv(sock_fd, data_buff, data_buff_size, flags);
 
     if (bytes_received > 0)
     {
         char *trimmed_str = trimTrailing(data_buff);
-        getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
-        
-        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received (%zd bytes) from the server\n", time_buff, bytes_received);
-        printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Received from the server: %s\n", time_buff, trimmed_str);
+
+        logTerminal(LOG_SUCCESSFUL, "Received (%zd bytes)", bytes_received);
+        logTerminal(LOG_SUCCESSFUL, "Received from the server: %s", trimmed_str);
     
         free(trimmed_str);
         trimmed_str = NULL;

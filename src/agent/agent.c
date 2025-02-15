@@ -6,6 +6,7 @@
 
 #include "shared/time.h"
 #include "shared/utils.h"
+#include "shared/log_manager.h"
 #include "shared/socket_manager.h"
 #include "shared/buffer_manager.h"
 #include "agent/agent.h"
@@ -14,7 +15,6 @@
 void startAgent(const char *server_ip, int server_port) 
 {
     int sock_fd;
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
     char server_data_buff[MSG_BUFF_SIZE];
     ssize_t server_data_length;
 
@@ -39,8 +39,7 @@ void startAgent(const char *server_ip, int server_port)
         throwError("Failed to connect to the server", NULL, TRUE);
     }
 
-    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
-    printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Connected to server at %s:%d\n\n", time_buff, server_ip, server_port);
+    logTerminal(LOG_INFORMATIONAL, "Connected to server at %s:%d\n", server_ip, server_port);
 
     initializeBuffer(server_data_buff, 0, sizeof(server_data_buff));
 
@@ -59,8 +58,7 @@ void startAgent(const char *server_ip, int server_port)
         /* Loop exits gracefully. */
         if(server_data_length == 0)
         {
-            getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
-            printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" INFORMATIONAL "*" RESET "] " "Server closed the connection\n", time_buff);
+            logTerminal(LOG_INFORMATIONAL, "Server closed the connection");
             break;
         }
 
@@ -80,11 +78,8 @@ void startAgent(const char *server_ip, int server_port)
 void closeAgent(int sock_fd)
 {
     closeSocket(sock_fd);
-
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
-    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
     
-    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Agent has been terminated\n", time_buff);
+    logTerminal(LOG_INFORMATIONAL, "Agent has been terminated");
     
     return;
 }

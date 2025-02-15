@@ -1,10 +1,12 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 #include "shared/time.h"
 #include "shared/utils.h"
+#include "shared/log_manager.h"
 #include "shared/socket_manager.h"
 #include "server/server.h"
 #include "server/agent_handler.h"
@@ -16,7 +18,6 @@ void startServer(int port, int backlog)
     int sock_opts, is_bound, is_listening;
     Agent agent;
     ssize_t agent_data_length;
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
 
     /* Create and configure the server socket. */
     listening_sock_fd = createSocket();
@@ -56,8 +57,7 @@ void startServer(int port, int backlog)
         throwError("Failed to listen", NULL, TRUE);
     }
 
-    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
-    printf("\n" "[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Server is up and running on %s:%d\n\n", time_buff, inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
+    logTerminal(LOG_INFORMATIONAL, "Server is up and running on %s:%d\n", inet_ntoa(server_addr.sin_addr), ntohs(server_addr.sin_port));
 
     /* Listening while for accepting connections. */
     while(TRUE)
@@ -120,9 +120,13 @@ void closeServer(int sock_fd)
 {
     closeSocket(sock_fd);
 
-    char time_buff[TIMESTAMP_BUFFER_SIZE];
-    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
+    /**
+     * @ TODO: Need to be enhanced. It is not completed yet.
+     */
 
-    printf("[" INFORMATIONAL "%s" RESET "] " "[" SUCCESSFUL "+" RESET "] " "Server has been shut down\n", time_buff);
+    throwError("Server has been terminated", "Keyboard interrupt received", FALSE);
+
+    exit(0);
+
     return;
 }
