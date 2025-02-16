@@ -8,7 +8,7 @@
 void logTerminal(size_t log_type, const char *log_msg_format, ...)
 {
     char time_buff[TIMESTAMP_BUFFER_SIZE];
-    getTimestamp(time_buff, FORMAT_FULL_TIMESTAMP);
+    getTimestamp(time_buff);
 
     // Choose the correct output stream.
     FILE *stream = (log_type == LOG_ERROR) ? stderr : stdout;
