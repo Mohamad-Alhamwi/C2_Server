@@ -12,6 +12,9 @@
 #define CLEANUP_FILE_DESCRIPTORS 1
 #define CLEANUP_MEMORY  2
 
+// 
+#define MSG_BUFF_SIZE 1024
+
 /**
  * @brief Logs an abort message and terminates the program.
  *
@@ -83,5 +86,9 @@ char *trimTrailing(const char *str);
  *          set the pointer to NULL after freeing to avoid dangling pointers.
  */
 char *trimString(const char *str);
+
+void initializeBuffer(void * ptr, int value, size_t num);
+
+extern void (*zeroBuffer)(void *, int, size_t);
 
 #endif
