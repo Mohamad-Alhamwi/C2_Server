@@ -45,12 +45,3 @@ const char * formatMessage(char *buffer, const char *type, const char *action, c
 
     return msg_id;
 }
-
-void initializeBuffer(void * ptr, int value, size_t num)
-{
-    memset(ptr, value, num);
-    return;
-}
-
-// Define an alias for initializeBuffer().
-void (*zeroBuffer)(void *, int, size_t) = initializeBuffer;
