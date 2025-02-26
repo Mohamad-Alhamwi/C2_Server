@@ -124,11 +124,11 @@ char *trimString(const char *str)
     return fully_trimmed;
 }
 
-void initializeBuffer(void * ptr, int value, size_t num)
+void initializeBuffer(void * ptr, size_t buf_size)
 {
-    memset(ptr, value, num);
+    memset(ptr, '\0', buf_size);
     return;
 }
 
 // Define an alias for initializeBuffer().
-void (*zeroBuffer)(void *, int, size_t) = initializeBuffer;
+void (*zeroBuffer)(void *, size_t) = initializeBuffer;

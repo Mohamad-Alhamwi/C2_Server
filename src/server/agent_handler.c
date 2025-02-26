@@ -14,7 +14,7 @@
 void initAgent(Agent *agent, int sock_fd)
 {
     agent -> sock_fd = sock_fd;
-    initializeBuffer(agent -> data_buff, 0, sizeof(agent -> data_buff));
+    initializeBuffer(agent -> data_buff, sizeof(agent -> data_buff));
 }
 
 /* Receive data from agent. */

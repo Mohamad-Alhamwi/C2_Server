@@ -8,7 +8,7 @@
 #include "shared/utils.h"
 #include "shared/log_manager.h"
 #include "shared/socket_manager.h"
-#include "shared/buffer_manager.h"
+#include "shared/message_manager.h"
 #include "agent/agent.h"
 #include "agent/server_handler.h"
 
@@ -41,7 +41,7 @@ void startAgent(const char *server_ip, int server_port)
 
     logTerminal(LOG_INFORMATIONAL, "Connected to server at %s:%d\n", server_ip, server_port);
 
-    initializeBuffer(server_data_buff, 0, sizeof(server_data_buff));
+    initializeBuffer(server_data_buff, sizeof(server_data_buff));
 
      /* Handling while for handling communication with server. */
     while(TRUE)

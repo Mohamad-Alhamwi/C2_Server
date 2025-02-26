@@ -39,7 +39,7 @@ void startServer(int port, int backlog)
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(port);
     server_addr.sin_addr.s_addr = INADDR_ANY;        // Bind the server to all available IP addresses on the host.
-    zeroBuffer(&(server_addr.sin_zero), '\0', 8);    // Zero the rest of the struct.
+    zeroBuffer(&(server_addr.sin_zero), sizeof(server_addr.sin_zero));    // Zero the rest of the struct.
 
     is_bound = bindSocketToIp(listening_sock_fd, (struct sockaddr *) &server_addr, sizeof(server_addr));
 

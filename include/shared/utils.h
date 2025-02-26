@@ -1,6 +1,8 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <stddef.h>
+
 // Boolean-like values for logical operations and flag checks.
 #define FALSE 0
 #define TRUE 1
@@ -11,9 +13,6 @@
 // Cleanup operation types for the cleanUp function.
 #define CLEANUP_FILE_DESCRIPTORS 1
 #define CLEANUP_MEMORY  2
-
-// 
-#define MSG_BUFF_SIZE 1024
 
 /**
  * @brief Logs an abort message and terminates the program.
@@ -87,8 +86,8 @@ char *trimTrailing(const char *str);
  */
 char *trimString(const char *str);
 
-void initializeBuffer(void * ptr, int value, size_t num);
+void initializeBuffer(void * ptr, size_t buf_size);
 
-extern void (*zeroBuffer)(void *, int, size_t);
+extern void (*zeroBuffer)(void *, size_t);
 
 #endif
