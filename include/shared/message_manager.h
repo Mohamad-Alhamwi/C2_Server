@@ -1,0 +1,6 @@
+#ifndef MESSAGE_MANAGER_H
+#define MESSAGE_MANAGER_H
+
+#define MSG_BUFF_SIZE 4096
+
+#endif
