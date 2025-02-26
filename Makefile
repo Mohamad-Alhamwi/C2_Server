@@ -3,8 +3,8 @@ CC = gcc
 CFLAGS = -Wall -Iinclude
 
 # Source files for server and agent.
-SERVER_SRC = main_server.c src/server/server.c src/server/agent_handler.c src/server/message_handler.c src/shared/socket_manager.c src/shared/log_manager.c src/shared/utils.c src/shared/time.c
-AGENT_SRC = main_agent.c src/agent/agent.c src/agent/server_handler.c src/shared/socket_manager.c src/shared/log_manager.c src/shared/utils.c src/shared/time.c
+SERVER_SRC = main_server.c src/server/server.c src/server/agent_handler.c src/server/message_handler.c src/shared/socket_manager.c src/shared/log_manager.c src/shared/utils.c src/shared/time.c src/shared/message_manager.c
+AGENT_SRC = main_agent.c src/agent/agent.c src/agent/server_handler.c src/shared/socket_manager.c src/shared/log_manager.c src/shared/utils.c src/shared/time.c src/shared/message_manager.c
 
 # Object files for server and agent.
 SERVER_OBJ = $(SERVER_SRC:.c=.o)
