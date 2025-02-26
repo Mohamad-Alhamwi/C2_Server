@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 
-#include "shared/buffer_manager.h"
+#include "shared/message_manager.h"
 
 /* Define the Agent structure */
 typedef struct

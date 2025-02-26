@@ -3,7 +3,6 @@
 
 # include "shared/utils.h"
 # include "shared/log_manager.h"
-# include "shared/buffer_manager.h"
 # include "agent/agent.h"
 
 void printUsageInformation(const char *program_name)

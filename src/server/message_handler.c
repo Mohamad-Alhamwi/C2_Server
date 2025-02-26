@@ -1,4 +1,4 @@
-
+#include <stddef.h>
 
 #include <shared/time.h>
 #include <shared/utils.h>
@@ -35,13 +35,4 @@ void generateMessageID(char *msg_id)
     ++ counter;
 
     return;
-}
-
-const char * formatMessage(char *buffer, const char *type, const char *action, const char *data)
-{
-    // Generate a unique ID for each message.
-    char msg_id[MSG_ID_SIZE];
-    generateMessageID(msg_id);
-
-    return msg_id;
 }

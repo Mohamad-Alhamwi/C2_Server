@@ -1,6 +1,8 @@
 #ifndef LOG_MANAGER_H
 #define LOG_MANAGER_H
 
+#include <stddef.h>
+
 // Color codes.
 #define RESET         "\033[0m"      // Reset to default color.
 #define INFORMATIONAL "\033[34m"     // Blue for informational messages.
